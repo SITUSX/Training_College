@@ -1,0 +1,63 @@
+* {
+text-decoration: none;
+}
+
+.header{
+    margin: 10px auto;
+}
+
+.header_menu, .body{
+    margin: 20px;
+    padding: 10px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    background-clip: padding-box;
+    width: auto;
+    background: #fff;
+    border: 1px solid #eaeaea;
+    box-shadow: 0 0 25px #cac6c6;
+    text-align: center;
+}
+
+button{
+    font-weight: bold;
+    font-size: 15px;
+    padding: 10px;
+    margin: auto 10px;
+    width: 200px;
+    height: 50px;
+    display: inline;
+    border-radius: 5px;
+    border: 1px solid #eaeaea;
+    outline: none;
+}
+
+button:hover{
+    background: #eaeaea;
+}
+
+#logout{
+    width: 100px;
+}
+
+.menu{
+    list-style: none;
+    display: inline;
+    margin: auto 20px;
+}
+
+.list{
+    list-style: none;
+    display: block;
+    margin: 20px;
+    padding: 10px;
+}
+
+.lesson{
+    margin: auto;
+    padding: 10px;
+    border: 1px solid #eaeaea;
+    border-radius: 10px;
+}
+

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order</title>
+
+    <link href="../css/home.css" rel="stylesheet">
+    <script src="../js/jquery-3.3.1.min.js"></script>
+    <script src="../js/logout.js"></script>
+</head>
+<body>
+<div class="main">
+<div class="header">
+    <div class="header_menu">
+        <ul>
+            <li class="menu"><a href="home.html"><button>主页</button></a></li>
+            <li class="menu"><a href="order.html"><button>订单</button></a></li>
+            <li class="menu"><a href="personal.html"><button>个人</button></a></li>
+        </ul>
+        <button id="logout" onclick="logout('student')">登出</button>
+    </div>
+    <div class="body">
+        <ul id="orders">
+        </ul>
+    </div>
+</div>
+</div>
+</body>
+
+<script>
+    $().ready(function () {
+        $.ajax({
+            type: 'GET',
+            url: '/student/getOrders',
+            data: {},
+            success: function (response) {
+                if (response.result){
+                    let list = response.data;
+                    console.log(list);
+                    for(let i=0; i<list.length;i++)
+                        addOrder(list[i]);
+                } else {
+                    alert("获取课程信息错误");
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.status + ' ' + XMLHttpRequest.readyState + ' ' + textStatus);
+            },
+        })
+    });
+    
+    function pay(orderId) {
+        $.ajax({
+            type: 'POST',
+            url: '/student/pay',
+            data: {
+                orderId: orderId
+            },
+            success: function (response) {
+                if (response.result){
+                    alert("支付成功！")
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.status + ' ' + XMLHttpRequest.readyState + ' ' + textStatus);
+            },
+        })
+    }
+
+    function cancel(orderId) {
+        $.ajax({
+            type: 'POST',
+            url: '/student/cancel',
+            data: {
+                orderId: orderId
+            },
+            success: function (response) {
+                if (response.result){
+                    alert("取消成功")
+                } else {
+                    alert("取消失败");
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.status + ' ' + XMLHttpRequest.readyState + ' ' + textStatus);
+            },
+        })
+    }
+    
+    function drop(orderId) {
+        $.ajax({
+            type: 'POST',
+            url: '/student/drop',
+            data: {
+                orderId: orderId
+            },
+            success: function (response) {
+                if (response.result){
+                    alert(response.message)
+                } else {
+                    alert("退课失败");
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.status + ' ' + XMLHttpRequest.readyState + ' ' + textStatus);
+            },
+        })
+    }
+    
+    function addOrder(order) {
+        $('#orders').append(
+            "<li class=\"list\">" +
+            "<div class=\"lesson\">" +
+            "<h6>订单ID: " + order.orderId + "</h6>" +
+            "<h4>课程名: " + order.lessonName +"</h4>" +
+            "<label>班级: " + order.classId +"</label>" +
+            "<label>;&nbsp;&nbsp;学生数:" + order.studentNum +"</label>" +
+            "<p>会员后总价: " + order.totalPrice +"</p>");
+        let isPaid = order.paid;
+        let isCancel = order.cancel;
+        let isDrop = order.drop;
+
+        if(!isPaid&&!isCancel&&!isDrop){
+            $('#orders').append(
+                "<button onclick='pay("+order.orderId+")'>付款</button>" +
+                "<button onclick='cancel("+ order.orderId +")'>取消</button>" +
+                "</div>" +
+                "</li>");
+            return
+        }
+
+        if(isPaid&&!isCancel&&!isDrop){
+            $('#orders').append(
+                "<button onclick='drop("+order.orderId+")'>退课</button>" +
+                "</div>" +
+                "</li>");
+            return
+        }
+
+        if(isPaid&&!isCancel&&isDrop){
+            let returnPrice = 0;
+            let orderId = order.orderId;
+            $.ajax({
+                type: 'POST',
+                url: '/student/getReturn',
+                data: {
+                    orderId: orderId
+                },
+                async: false,
+                success: function (response) {
+                    if (response.result){
+                        returnPrice = response.data;
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    alert(XMLHttpRequest.status + ' ' + XMLHttpRequest.readyState + ' ' + textStatus);
+                },
+            });
+            $('#orders').append(
+                "<button>已退课，<label>退回"+ returnPrice +"元。</label></button>" +
+                "</div>" +
+                "</li>");
+            return
+        }
+
+        if(!isPaid&&isCancel&&!isDrop){
+            $('#orders').append(
+                "<button>已取消</button>" +
+                "</div>" +
+                "</li>");
+            return
+        }
+    }
+</script>
+</html>

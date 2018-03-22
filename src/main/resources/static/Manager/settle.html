@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Settle</title>
+
+    <link href="../css/index.css" rel="stylesheet">
+    <link href="../css/home.css" rel="stylesheet">
+    <script src="../js/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+<div class="main">
+    <div class="header">
+        <div class="header_menu">
+            <ul>
+                <li class="menu"><a href="manage.html"><button>机构管理</button></a></li>
+                <li class="menu"><a href="settle.html"><button>结算</button></a></li>
+                <li class="menu"><a href="statistics.html"><button>统计</button></a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="index">
+    <button id="settle">结算</button>
+</div>
+</body>
+
+<script>
+    $('#settle').click(function () {
+        $.ajax({
+            type: 'GET',
+            url: '/manager/settleAccounts',
+            data: {},
+            success: function (response) {
+                if (response.result){
+                    alert("结算成功");
+                } else {
+                    alert("结算失败");
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.status + ' ' + XMLHttpRequest.readyState + ' ' + textStatus);
+            },
+        })
+    })
+</script>
+</html>

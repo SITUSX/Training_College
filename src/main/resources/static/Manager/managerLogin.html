@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+
+    <link href="../css/index.css" rel="stylesheet">
+    <link href="../css/login.css" rel="stylesheet">
+    <script src="../js/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+<<div class="index">
+    <h3>管理员登陆</h3>
+    <div>
+        <p>管理员ID</p><input type="text" id="id">
+    </div>
+    <div>
+        <p>管理员密码</p><input type="password" id="password">
+    </div>
+    <button id="login">登陆</button>
+</div>
+</body>
+
+<script>
+    $().ready(function () {
+            $("#login").click(function () {
+                let id = $('#id').val();
+                let password = $('#password').val();
+                $.ajax({
+                    type: 'POST',
+                    url: '/manager/login',
+                    data: {
+                        id: id,
+                        password: password
+                    },
+                    success: function (response) {
+                        if (response.result){
+                            window.location.href="manage.html";
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        alert(XMLHttpRequest.status + ' ' + XMLHttpRequest.readyState + ' ' + textStatus);
+                    },
+                })
+            })
+        }
+    );
+</script>
+</html>

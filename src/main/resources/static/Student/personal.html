@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Personal</title>
+
+    <link href="../css/home.css" rel="stylesheet">
+    <script src="../js/jquery-3.3.1.min.js"></script>
+    <script src="../js/logout.js"></script>
+
+</head>
+<body>
+<div class="main">
+    <div class="header">
+        <div class="header_menu">
+            <ul>
+                <li class="menu"><a href="home.html"><button>主页</button></a></li>
+                <li class="menu"><a href="order.html"><button>订单</button></a></li>
+                <li class="menu"><a href="personal.html"><button>个人</button></a></li>
+            </ul>
+            <button id="logout" onclick="logout('student')">登出</button>
+        </div>
+        <div class="body" style="width: 500px; margin: auto">
+            <p>学生ID：<span id="studentId"></span></p>
+            <p>邮箱：<span id="mail"></span></p>
+            <p>学生名：<span id="stdName"></span></p>
+            <p>是否会员：<span id="isMember"></span><button id="stop">停止会员</button></p>
+            <p>会员等级：<span id="lvMember"></span></p>
+            <p>消费：<span id="consumption"></span></p>
+            <button id="change">修改</button>
+        </div>
+    </div>
+</div>
+</body>
+
+<style>
+    #stop{
+        width: 80px;
+        height: 30px;
+        margin: 10px;
+        padding: 0;
+        border-color: black;
+    }
+</style>
+
+<script>
+    $().ready(function () {
+        $.ajax({
+            type: 'POST',
+            url: '/student/getInfo',
+            data: {},
+            success: function (response) {
+                if (response.result){
+                    $('#studentId').text(response.data.studentId);
+                    $('#mail').text(response.data.mail);
+                    $('#stdName').text(response.data.stdName);
+                    $('#isMember').text(response.data.isMember);
+                    $('#lvMember').text(response.data.lvMember);
+                    $('#consumption').text(response.data.consumption);
+                } else {
+                    alert("错误");
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.status + ' ' + XMLHttpRequest.readyState + ' ' + textStatus);
+            },
+        })
+    });
+
+    $("#stop").click(function () {
+        $.ajax({
+            type: 'GET',
+            url: '/student/stopMember',
+            data: {},
+            success: function (response) {
+                if (response.result){
+                    alert("停止成功");
+                } else {
+                    alert("错误");
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.status + ' ' + XMLHttpRequest.readyState + ' ' + textStatus);
+            },
+        })
+    });
+
+    $('#change').click(function () {
+        window.location.href="change.html";
+    })
+</script>
+</html>

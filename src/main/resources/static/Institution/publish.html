@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Publish</title>
+
+    <link href="../css/index.css" rel="stylesheet">
+    <link href="../css/apply.css" rel="stylesheet">
+
+    <script src="../js/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+<div class="index">
+    <h3>课程发布</h3>
+    <div>
+        <p>课程名</p><input type="text" id="lessonName">
+    </div>
+    <div>
+        <p>类型</p><input type="text" style="width: 100px" id="type">
+    </div>
+    <div>
+        <p>开始日期</p><input type="text" id="startDay"> <span>(yyyy-MM-dd)</span>
+    </div>
+    <div>
+        <p>结束日期</p><input type="text" id="endDay"> <span>(yyyy-MM-dd)</span>
+    </div>
+    <div>
+        <p>课程时间</p><input type="text" id="lessonTime">
+    </div>
+    <div>
+        <p>教师</p><input type="text" id="teachers">
+    </div>
+    <div>
+        <p>班级数/每班人数</p>
+        <input style="width: 50px;" type="text" id="classNum">/
+        <input style="width: 50px" type="text" id="stdNumPerClass">
+    </div>
+    <div>
+        <p>简介</p><textarea rows="5" cols="30" id="description"></textarea>
+    </div>
+    <div>
+        <p>价格</p><input type="number" id="price">
+    </div>
+    <button id="publish">发布</button>
+</div>
+</body>
+
+<style>
+    span{
+        font-size: 5px;
+    }
+</style>
+
+<script>
+    $('#publish').click(function () {
+        let lessonName  = $('#lessonName').val();
+        let startDay  = $('#startDay').val();
+        let endDay = $('#endDay').val();
+        let lessonTime = $('#lessonTime').val();
+        let teachers = $('#teachers').val();
+        let classNum = $('#classNum').val();
+        let stdNumPerClass = $('#stdNumPerClass').val();
+        let price = $('#price').val();
+        let type = $('#type').val();
+        let description = $('#description').val();
+
+        $.ajax({
+            type: 'POST',
+            url: '/institution/publish',
+            data: {
+                lessonName: lessonName,
+                startDay: startDay,
+                endDay: endDay,
+                lessonTime: lessonTime,
+                teachers: teachers,
+                classNum: classNum,
+                stdNumPerClass: stdNumPerClass,
+                price: price,
+                type: type,
+                description: description
+            },
+            success: function (response) {
+                if (response.result){
+                    alert("发布成功")
+                } else {
+                    alert("发布失败");
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.status + ' ' + XMLHttpRequest.readyState + ' ' + textStatus);
+            },
+        })
+    })
+</script>
+
+</html>

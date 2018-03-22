@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Institution</title>
+
+    <link href="../css/home.css" rel="stylesheet">
+    <script src="../js/jquery-3.3.1.min.js"></script>
+    <script src="../js/logout.js"></script>
+</head>
+<body>
+<div class="main">
+    <div class="header">
+        <div class="header_menu">
+            <ul>
+                <li class="menu"><a href="institution.html"><button>主页</button></a></li>
+                <li class="menu"><a href="statistics.html"><button>统计</button></a></li>
+                <li class="menu"><a href="information.html"><button>机构</button></a></li>
+            </ul>
+            <button id="logout" onclick="logout('institution')">登出</button>
+        </div>
+        <div class="body">
+            <button id="publish">发布新课程</button>
+            <ul id="lessons">
+
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    $().ready(function () {
+        $.ajax({
+            type: 'GET',
+            url: '/institution/getLessons',
+            data: {},
+            success: function (response) {
+                if (response.result){
+                    let list = response.data;
+                    for(let i=0; i<list.length;i++)
+                        addLesson(list[i]);
+                } else {
+                    alert("获取课程信息错误");
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.status + ' ' + XMLHttpRequest.readyState + ' ' + textStatus);
+            },
+        })
+    });
+
+    function addLesson(lesson) {
+        $('#lessons').append(
+            "<li class=\"list\">" +
+            "<div class=\"lesson\">" +
+            "<h3>课程名：" + lesson.lessonName +"</h3>" +
+            "<p>课程类型：" + lesson.type +"</p>" +
+            "<p>起讫日期：" + lesson.startDay +" 至 "+ lesson.endDay +"</p>" +
+            "<p>课程时间：" + lesson.lessonTime +"</p>" +
+            "<p>教师： " + lesson.teachers +"</p>" +
+            "<p>班级数/每班人数： " + lesson.classNum+"/"+lesson.stdNumPerClass +"</p>" +
+            "<p>简介： " + lesson.description +"</p>" +
+            "<p>价格： " + lesson.price +"</p>" +
+            "</div>" +
+            "</li>");
+    }
+
+    $('#publish').click(function () {
+        window.location.href="publish.html";
+    })
+</script>
+
+</body>
+</html>

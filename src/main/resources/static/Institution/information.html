@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Information</title>
+
+    <link href="../css/index.css" rel="stylesheet">
+    <link href="../css/home.css" rel="stylesheet">
+    <script src="../js/jquery-3.3.1.min.js"></script>
+    <script src="../js/regular.js"></script>
+    <script src="../js/logout.js"></script>
+</head>
+<body>
+<div class="main">
+    <div class="header">
+        <div class="header_menu">
+            <ul>
+                <li class="menu"><a href="institution.html"><button>主页</button></a></li>
+                <li class="menu"><a href="statistics.html"><button>统计</button></a></li>
+                <li class="menu"><a href="information.html"><button>机构</button></a></li>
+            </ul>
+            <button id="logout" onclick="logout('institution')">登出</button>
+        </div>
+    </div>
+</div>
+<div class="index" style="width: 500px">
+    <p>机构ID：<span id="institutionId"></span>（不可修改）</p>
+    <p>机构识别码：<span id="verify"></span>（不可修改）</p>
+    <p>邮箱：<input id="mail"></p>
+    <p>机构名：<input type="text" id="insName"></p>
+    <p>地址：<input type="text" style="width: 200px" id="location"></p>
+    <p style="display:inline; float: left; margin: 0 0 0 100px">师资情况：</p>
+    <textarea rows="5" cols="30" id="teachers"></textarea>
+    <p>电话：<input type="text" id="phone"></p>
+    <p>新密码：<input type="password" id="password"></p>
+    <p>再次输入新密码：<input type="password" id="password2"></p>
+    <button id="change" style="width: 150px">提交修改</button>
+</div>
+
+</body>
+
+<style>
+    textarea{
+        border: 1px solid #eaeaea;
+        -webkit-border-radius: 10px;
+        border-radius: 10px;
+        -moz-border-radius: 10px;
+        resize: none;
+        outline: none;
+        padding: 10px;
+    }
+</style>
+
+<script>
+    $().ready(function () {
+        $.ajax({
+            type: 'GET',
+            url: '/institution/getInfo',
+            data: {},
+            success: function (response) {
+                if (response.result){
+                    $('#institutionId').text(response.data.institutionId);
+                    $('#verify').text(response.data.verify);
+                    $('#mail').val(response.data.mail);
+                    $('#insName').val(response.data.institutionName);
+                    $('#location').val(response.data.location);
+                    $('#teachers').text(response.data.teachers);
+                    $('#phone').val(response.data.phone);
+                } else {
+                    alert("错误");
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.status + ' ' + XMLHttpRequest.readyState + ' ' + textStatus);
+            }
+        })
+    });
+
+    $('#change').click(function () {
+        let mail = $('#mail').val();
+        if(!regMail(mail)){
+            alert("请输入正确的邮箱");
+            return
+        }
+
+        let phone = $('#phone').val();
+        if(!regPhone(phone)){
+            alert("请输入正确的手机号");
+            return
+        }
+
+        let psd = $('#password').val();
+        let psd2 = $('#password2').val();
+        if(psd===null){
+            alert("请输入密码");
+            return
+        }
+        if(psd!==psd2){
+            alert("两次输入密码不相同");
+            return
+        }
+
+        let institutionId = $('#institutionId').text();
+        let institutionName = $('#insName').val();
+        let location = $('#location').val();
+        let teachers = $('#teachers').val();
+
+        $.ajax({
+            type: 'POST',
+            url: '/institution/modify',
+            data: {
+                institutionId: institutionId,
+                mail: mail,
+                institutionName: institutionName,
+                location: location,
+                teachers: teachers,
+                phone: phone,
+                password: psd
+            },
+            success: function (response) {
+                if (response.result) {
+                    alert("申请成功，请等待管理员审核。\n审核成功将会发送邮件通知。");
+                } else {
+                    alert("错误");
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.status + ' ' + XMLHttpRequest.readyState + ' ' + textStatus);
+            }
+        })
+    })
+</script>
+</html>

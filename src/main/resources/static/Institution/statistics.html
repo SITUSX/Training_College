@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Statistics</title>
+
+    <link href="../css/index.css" rel="stylesheet">
+    <link href="../css/home.css" rel="stylesheet">
+    <script src="../js/jquery-3.3.1.min.js"></script>
+    <script src="../js/logout.js"></script>
+</head>
+<body>
+<div class="main">
+    <div class="header">
+        <div class="header_menu">
+            <ul>
+                <li class="menu"><a href="institution.html"><button>主页</button></a></li>
+                <li class="menu"><a href="statistics.html"><button>统计</button></a></li>
+                <li class="menu"><a href="information.html"><button>机构</button></a></li>
+            </ul>
+            <button id="logout" onclick="logout('institution')">登出</button>
+        </div>
+        <div class="index" style="margin: 20px auto">
+            <label>机构总资产: <span id="balance">0</span></label>
+        </div>
+        <div class="body">
+            <ul id="lessonBalances">
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+
+<script>
+    $.ajax({
+        type: 'GET',
+        url: '/institution/getBalance',
+        data: {},
+        success: function (response) {
+            if (response.result){
+                let totalBalance = 0;
+                let list = response.data;
+                for(let i=0; i<list.length;i++){
+                    addLessonBalance(list[i]);
+                    totalBalance = totalBalance + list[i].balance;
+                }
+                $('#balance').text(totalBalance);
+            } else {
+                alert(response.message);
+            }
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            alert(XMLHttpRequest.status + ' ' + XMLHttpRequest.readyState + ' ' + textStatus);
+        },
+    });
+
+    function addLessonBalance(lessonBalance) {
+        $('#lessonBalances').append(
+            "<li class=\"list\">" +
+            "<div class=\"lesson\">" +
+            "<label>课程ID：" + lessonBalance.lessonId +"</label>" +
+            "<label>;&nbsp;&nbsp;课程收入：" + lessonBalance.balance +"</label>" +
+            "</div>" +
+            "</li>");
+    }
+</script>
+</html>

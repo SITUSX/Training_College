@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+
+    <link href="../css/home.css" rel="stylesheet">
+    <script src="../js/jquery-3.3.1.min.js"></script>
+    <script src="../js/logout.js"></script>
+</head>
+<body>
+<div class="main">
+    <div class="header">
+        <div class="header_menu">
+            <ul>
+                <li class="menu"><a href="home.html"><button>主页</button></a></li>
+                <li class="menu"><a href="order.html"><button>订单</button></a></li>
+                <li class="menu"><a href="personal.html"><button>个人</button></a></li>
+            </ul>
+            <button id="logout" onclick="logout('student')">登出</button>
+        </div>
+        <div class="body">
+            <ul id="lessons">
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+
+<style>
+    .more{
+        width: 100px;
+        height: 40px;
+        float: right;
+    }
+    p{
+        margin-bottom: 20px;
+    }
+</style>
+
+<script>
+$().ready(function () {
+    $.ajax({
+        type: 'GET',
+        url: '/student/getLessons',
+        data: {},
+        success: function (response) {
+            if (response.result){
+                let list = response.data;
+                for(let i=0; i<list.length;i++)
+                    addLesson(list[i]);
+            } else {
+                alert("获取课程信息错误");
+            }
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+            alert(XMLHttpRequest.status + ' ' + XMLHttpRequest.readyState + ' ' + textStatus);
+        },
+    })
+});
+
+function addLesson(lesson) {
+    $('#lessons').append(
+        "<li class=\"list\">" +
+        "<div class=\"lesson\">" +
+        "<h6>课程ID： " + lesson.lessonId +
+        "<button class='more' id='"+ lesson.lessonId +"' onclick='more(id)''>查看详情</button>" +
+        "</h6>" +
+        "<h3>课程名： " + lesson.lessonName +"</h3>" +
+        "<p>课程简介： " + lesson.description +"</p>" +
+        "</div>" +
+        "</li>");
+}
+
+function more(id) {
+    window.location.href="lesson.html?lessonId="+id;
+}
+
+</script>
+</html>

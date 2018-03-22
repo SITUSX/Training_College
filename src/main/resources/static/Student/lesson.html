@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lesson</title>
+
+    <link href="../css/index.css" rel="stylesheet">
+    <script src="../js/jquery-3.3.1.min.js"></script>
+    <script src="../js/parseurl.js"></script>
+
+</head>
+<body>
+    <div class="index">
+        <h5>课程ID：<span id="lessonId"></span></h5>
+        <h3>课程名：<span id="lessonName"></span></h3>
+        <p>课程类型：<span id="type"></span></p>
+        <p>起讫日期：<span id="date"></span></p>
+        <p>课程时间：<span id="time"></span></p>
+        <p>教师：<span id="teachers"></span></p>
+        <p>班级数/每班人数：<span id="class"></span></p>
+        <p>简介：<span id="description"></span></p>
+        <p>价格：<span id="price"></span></p>
+        <button style="width: 100px" id="reserve">预定</button>
+    </div>
+</body>
+
+<script>
+$().ready(function () {
+    let lessonId = parseurl();
+    $('#lessonId').text(lessonId);
+    $.ajax({
+        type: 'GET',
+        url: '/student/getLesson',
+        data: {
+            lessonId: lessonId
+        },
+        success: function (response) {
+            if (response.result) {
+                let lesson = response.data;
+                $('#lessonName').text(lesson.lessonName);
+                $('#type').text(lesson.type);
+                $('#date').text(lesson.startDay+" 至 "+lesson.endDay);
+                $('#time').text(lesson.lessonTime);
+                $('#teachers').text(lesson.teachers);
+                $('#class').text(lesson.classNum+"/"+lesson.stdNumPerClass);
+                $('#description').text(lesson.description);
+                $('#price').text(lesson.price);
+            } else {
+                alert("获取错误");
+            }
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(XMLHttpRequest.status + ' ' + XMLHttpRequest.readyState + ' ' + textStatus);
+        },
+    })
+});
+
+    $('#reserve').click(function () {
+        window.location.href="reserve.html?lessonId="+parseurl();
+    })
+
+</script>
+</html>

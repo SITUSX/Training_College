@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Signup</title>
+
+    <link href="../css/index.css" rel="stylesheet">
+    <link href="../css/apply.css" rel="stylesheet">
+    <script src="../js/jquery-3.3.1.min.js"></script>
+    <script src="../js/regular.js"></script>
+</head>
+<body>
+<div class="index">
+    <h3>用户注册</h3>
+    <div>
+        <p>邮箱</p><input type="email" id="mail">
+    </div>
+    <div>
+        <p>验证码</p><input type="text" id="verifyCode">
+        <button style="display: inline; height: 40px; width: 60px" id="verify">验证</button>
+    </div>
+    <div>
+        <p>用户名</p><input type="text" id="stdName">
+    </div>
+    <div>
+        <p>密码</p><input type="password" id="password">
+    </div>
+    <div>
+        <p>再次输入密码</p><input type="password" id="password2">
+    </div>
+    <button id="signup">注册</button>
+</div>
+</body>
+
+<script>
+    let verifyCode = 0;
+
+    $('#verify').click(function () {
+        let mail = $('#mail').val();
+        if(!regMail(mail)){
+            alert("请输入正确的邮箱");
+            return
+        }
+        $.ajax({
+            type: 'POST',
+            url: '/student/verify',
+            data: {
+                mail: mail,
+            },
+            success: function (response) {
+                if (response.result){
+                    verifyCode = response.data;
+                    alert("验证码已发送。")
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.status + ' ' + XMLHttpRequest.readyState + ' ' + textStatus);
+            },
+        })
+    });
+
+    $('#signup').click(function () {
+        let mail = $('#mail').val();
+        let stdName = $('#stdName').val();
+        let psd = $('#password').val();
+        let psd2 = $('#password2').val();
+        if (verifyCode===0){
+            alert("请先验证邮箱");
+            return
+        }
+        if (psd!==psd2){
+            alert("两次输入密码不一致");
+            return
+        }
+        $.ajax({
+            type: 'POST',
+            url: '/student/signup',
+            data: {
+                mail: mail,
+                stdName: stdName,
+                password: psd
+            },
+            success: function (response) {
+                if (response.result){
+                    if(confirm("注册成功！用户ID已发送到邮箱"))
+                        window.location.href = "login.html";
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.status + ' ' + XMLHttpRequest.readyState + ' ' + textStatus);
+            },
+        })
+    })
+</script>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Balance</title>
+
+    <link href="../css/index.css" rel="stylesheet">
+    <link href="../css/home.css" rel="stylesheet">
+    <script src="../js/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+<div class="main">
+    <div class="header">
+        <div class="header_menu">
+            <ul>
+                <li class="menu"><a href="manage.html"><button>机构管理</button></a></li>
+                <li class="menu"><a href="settle.html"><button>结算</button></a></li>
+                <li class="menu"><a href="statistics.html"><button>统计</button></a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="index">
+    <label>结算:<span id="balance"></span></label>
+</div>
+<div class="index" style="width: 600px;">
+    <div class="body">
+        <h3>学生</h3>
+        <ul id="students">
+        </ul>
+    </div>
+    <div class="body">
+        <h3>机构</h3>
+        <ul id="institutions">
+        </ul>
+    </div>
+</div>
+</body>
+
+<script>
+    $().ready(function () {
+        $.ajax({
+            type: 'GET',
+            url: '/manager/getBalance',
+            data: {},
+            success: function (response) {
+                if (response.result){
+                    $('#balance').text(response.message);
+                } else {
+                    alert("获取失败");
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.status + ' ' + XMLHttpRequest.readyState + ' ' + textStatus);
+            },
+        });
+        $.ajax({
+            type: 'GET',
+            url: '/manager/getStudents',
+            data: {},
+            success: function (response) {
+                if (response.result){
+                    let list = response.data;
+                    console.log(list);
+                    for(let i=0; i<list.length;i++)
+                        addStudent(list[i]);
+                } else {
+                    alert("获取失败");
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.status + ' ' + XMLHttpRequest.readyState + ' ' + textStatus);
+            },
+        });
+        $.ajax({
+            type: 'GET',
+            url: '/manager/getInstitutions',
+            data: {},
+            success: function (response) {
+                if (response.result){
+                    let list = response.data;
+                    console.log(list);
+                    for(let i=0; i<list.length;i++)
+                        addInstitution(list[i]);
+                } else {
+                    alert("获取失败");
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.status + ' ' + XMLHttpRequest.readyState + ' ' + textStatus);
+            },
+        })
+    });
+
+    function addStudent(student) {
+        $('#students').append(
+            "<li class=\"list\">" +
+            "<div class=\"lesson\">" +
+            "<h4>学生ID：" + student.studentId +"</h4>" +
+            "<label>邮箱: " + student.mail +"</label>" +
+            "<label>;&nbsp;&nbsp;&nbsp;学生名:" + student.stdName +"</label>" +
+            "<label>;&nbsp;&nbsp;&nbsp;消费:" + student.consumption +"</label>" +
+            "</div>" +
+            "</li>");
+    }
+
+    function addInstitution(institution) {
+        $('#institutions').append(
+            "<li class=\"list\">" +
+            "<div class=\"lesson\">" +
+            "<h4>机构ID： " + institution.institutionId +"</h4>" +
+            "<p>机构识别码:" + institution.verify +"</p>" +
+            "<label>邮箱:" + institution.mail +"</label>" +
+            "<label>&nbsp;&nbsp;&nbsp;&nbsp;手机:" + institution.phone +"</label>" +
+            "<p>机构名:" + institution.institutionName +"</p>" +
+            "<p>地址:" + institution.location +"</p>" +
+            "<p>师资力量:" + institution.teachers +"</p>" +
+            "</div>" +
+            "</li>");
+    }
+</script>
+</html>

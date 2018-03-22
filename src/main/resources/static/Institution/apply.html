@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Apply</title>
+
+    <link href="../css/index.css" rel="stylesheet">
+    <link href="../css/apply.css" rel="stylesheet">
+
+    <script src="../js/jquery-3.3.1.min.js"></script>
+    <script src="../js/regular.js"></script>
+
+
+</head>
+<body>
+<div class="index">
+    <h3>机构申请</h3>
+    <div>
+        <p>邮箱</p><input type="email" id="mail">
+    </div>
+    <div>
+        <p>机构名</p><input type="text" id="name">
+    </div>
+    <div>
+        <p>地址</p><input type="text" id="location">
+    </div>
+    <p>师资情况</p>
+    <textarea rows="5" cols="30" id="teachers"></textarea>
+    <div>
+        <p>电话</p><input type="text" id="phone">
+    </div>
+    <button id="apply">申请</button>
+</div>
+</body>
+
+<script>
+    $().ready(function () {
+        $('#apply').click(function () {
+            let mail = $('#mail').val();
+            if(!regMail(mail)){
+                alert("请输入正确的邮箱");
+                return
+            }
+            let phone = $('#phone').val();
+            if(!regPhone(phone)){
+                alert("请输入正确的手机号");
+                return
+            }
+            let name = $('#name').val();
+            let location = $('#location').val();
+            let teachers = $('#teachers').val();
+            $.ajax({
+                type: 'POST',
+                url: '/institution/apply',
+                data: {
+                    institutionName: name,
+                    mail: mail,
+                    location: location,
+                    teachers: teachers,
+                    phone: phone
+                },
+                success: function (response) {
+                    if (response.result){
+                        if(confirm("申请成功，请等待管理员审核。\n审核成功将会发送邮件通知。"))
+                            window.location.href = "login.html";
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    alert(XMLHttpRequest.status + ' ' + XMLHttpRequest.readyState + ' ' + textStatus);
+                },
+            })
+        })
+    })
+</script>
+</html>

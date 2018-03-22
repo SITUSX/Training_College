@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage</title>
+
+    <link href="../css/home.css" rel="stylesheet">
+    <script src="../js/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+<div class="main">
+    <div class="header">
+        <div class="header_menu">
+            <ul>
+                <li class="menu"><a href="manage.html"><button>机构管理</button></a></li>
+                <li class="menu"><a href="settle.html"><button>结算</button></a></li>
+                <li class="menu"><a href="statistics.html"><button>统计</button></a></li>
+            </ul>
+        </div>
+        <div class="body">
+            <h2>新机构申请</h2>
+            <ul id="new">
+            </ul>
+        </div>
+        <div class="body">
+            <h2>机构修改信息申请</h2>
+            <ul id="modify">
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+
+<script>
+    $().ready(function () {
+        $.ajax({
+            type: 'GET',
+            url: '/manager/getNews',
+            data: {},
+            success: function (response) {
+                if (response.result){
+                    let list = response.data;
+                    if($.isEmptyObject(list)){
+                        $('#new').append("<p>"+ response.message +"</p>");
+                        return
+                    }
+                    for(let i=0; i<list.length;i++)
+                        addNewIns(list[i]);
+                } else {
+                    alert("获取新机构申请错误");
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.status + ' ' + XMLHttpRequest.readyState + ' ' + textStatus);
+            },
+        });
+
+        $.ajax({
+            type: 'GET',
+            url: '/manager/getModify',
+            data: {},
+            success: function (response) {
+                if (response.result){
+                    let list = response.data;
+                    if($.isEmptyObject(list)){
+                        $('#modify').append("<p>"+ response.message +"</p>");
+                        return
+                    }
+                    for(let i=0; i<list.length;i++)
+                        addModifyIns(list[i]);
+                } else {
+                    alert("获取机构信息修改申请错误");
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.status + ' ' + XMLHttpRequest.readyState + ' ' + textStatus);
+            },
+        })
+    });
+
+    function addNewIns(newIns) {
+        $('#new').append(
+            "<li class=\"list\">" +
+            "<div class=\"lesson\">" +
+            "<h3>机构名： " + newIns.institutionName + "</h3>" +
+            "<h4>邮箱： " + newIns.mail +"</h4>" +
+            "<p>地址： " + newIns.location +"</p>" +
+            "<p>师资： " + newIns.teachers +"</p>" +
+            "<p>手机： " + newIns.phone +"</p>" +
+            "<button onclick=confirmNewIns('" + newIns.mail +"')>同意</button>" +
+            "<button>拒绝</button>" +
+            "</div>" +
+            "</li>");
+    };
+
+    function addModifyIns(modifyIns) {
+        $('#modify').append(
+            "<li class=\"list\">" +
+            "<div class=\"lesson\">" +
+            "<h3>机构ID： " + modifyIns.institutionId + "</h3>" +
+            "<h3>机构名： " + modifyIns.institutionName + "</h3>" +
+            "<h4>邮箱： " + modifyIns.mail +"</h4>" +
+            "<p>地址： " + modifyIns.location +"</p>" +
+            "<p>师资： " + modifyIns.teachers +"</p>" +
+            "<p>手机： " + modifyIns.phone +"</p>" +
+            "<button onclick='confirmModifyIns(" + modifyIns.institutionId  +")'>同意</button>" +
+            "<button>拒绝</button>" +
+            "</div>" +
+            "</li>");
+    };
+
+    function confirmNewIns(mail) {
+        $.ajax({
+            type: 'POST',
+            url: '/manager/confirmNewInstitution',
+            data: {
+                mail: mail
+            },
+            success: function (response) {
+                if (response.result){
+                    alert("成功");
+                } else {
+                    alert("错误");
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.status + ' ' + XMLHttpRequest.readyState + ' ' + textStatus);
+            },
+        });
+    }
+
+    function confirmModifyIns(institutionId) {
+        $.ajax({
+            type: 'POST',
+            url: '/manager/confirmModifyInstitution',
+            data: {
+                institutionId: institutionId
+            },
+            success: function (response) {
+                if (response.result){
+                    alert("成功");
+                } else {
+                    alert("错误");
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.status + ' ' + XMLHttpRequest.readyState + ' ' + textStatus);
+            },
+        });
+    }
+</script>
+
+</html>

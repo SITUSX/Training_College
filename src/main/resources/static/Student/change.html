@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Change</title>
+
+    <link href="../css/index.css" rel="stylesheet">
+
+    <script src="../js/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+<div class="index" style="width: 500px">
+    <p>学生ID：<span id="studentId"></span>（不可修改）</p>
+    <p>邮箱：<span id="mail"></span>（不可修改）</p>
+    <p>学生名：<input type="text" id="stdName"></p>
+    <p>新密码：<input type="password" id="password"></p>
+    <p>再次输入新密码：<input type="password" id="password2"></p>
+    <button id="change" style="width: 150px">提交修改</button>
+</div>
+</body>
+
+<script>
+    $().ready(function () {
+        $.ajax({
+            type: 'POST',
+            url: '/student/getInfo',
+            data: {},
+            success: function (response) {
+                if (response.result){
+                    $('#studentId').text(response.data.studentId);
+                    $('#mail').text(response.data.mail);
+                    $('#stdName').val(response.data.stdName);
+                } else {
+                    alert("错误");
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.status + ' ' + XMLHttpRequest.readyState + ' ' + textStatus);
+            }
+        })
+    });
+
+    $('#change').click(function () {
+        let mail = $('#mail').val();
+        let stdName = $('#stdName').val();
+        let psd = $('#password').val();
+        let psd2 = $('#password2').val();
+        if(psd===null){
+            alert("请输入密码");
+            return
+        }
+        if(psd!==psd2){
+            alert("两次输入密码不相同");
+            return
+        }
+        $.ajax({
+            type: 'POST',
+            url: '/student/change',
+            data: {
+                mail: mail,
+                stdName: stdName,
+                password: psd
+            },
+            success: function (response) {
+                if (response.result){
+                    alert("修改成功");
+                } else {
+                    alert("错误");
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.status + ' ' + XMLHttpRequest.readyState + ' ' + textStatus);
+            }
+        })
+    })
+</script>
+
+</html>
